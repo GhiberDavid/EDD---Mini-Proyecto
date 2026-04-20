@@ -1,4 +1,6 @@
 #include "../include/GraphList.hpp"
+#include <queue>      // Para la cola en BFS
+#include <stack>      // Para la pila en DFS
 
 GraphList::GraphList(int vertices, bool esDirigido) {
     numVertices = vertices;
@@ -109,4 +111,97 @@ void GraphList::printGrafo() {
         cout << endl;
     }
     cout << "===================================\n" << endl;
+}
+
+// BFS usando cola
+void GraphList::BFS(int inicio) {
+    if (inicio < 0 || inicio >= numVertices) {
+        cout << "Vértice de inicio inválido" << endl;
+        return;
+    }
+    
+    bool* visitado = new bool[numVertices];
+    for (int i = 0; i < numVertices; i++) {
+        visitado[i] = false;
+    }
+    
+    queue<int> cola;
+    visitado[inicio] = true;
+    cola.push(inicio);
+    
+    cout << "Recorrido BFS desde " << inicio << ": ";
+    
+    while (!cola.empty()) {
+        int actual = cola.front();
+        cola.pop();
+        cout << actual << " ";
+        
+        int cantidad;
+        int* vecinos = listaAdyacencia[actual].obtenerValores();
+        for (int i = 0; i < cantidad; i++) {
+            if (!visitado[vecinos[i]]) {
+                visitado[vecinos[i]] = true;
+                cola.push(vecinos[i]);
+            }
+        }
+        delete[] vecinos;
+    }
+    cout << endl;
+    
+    delete[] visitado;
+}
+
+// DFS iterativo
+void GraphList::DFS(int inicio) {
+    if (inicio < 0 || inicio >= numVertices) {
+        cout << "Vértice de inicio inválido" << endl;
+        return;
+    }
+    
+    bool* visitado = new bool[numVertices];
+    for (int i = 0; i < numVertices; i++) {
+        visitado[i] = false;
+    }
+    
+    stack<int> pila;
+    pila.push(inicio);
+    
+    cout << "Recorrido DFS desde " << inicio << ": ";
+    
+    while (!pila.empty()) {
+        int actual = pila.top();
+        pila.pop();
+        
+        if (!visitado[actual]) {
+            visitado[actual] = true;
+            cout << actual << " ";
+            
+            int cantidad;
+            int* vecinos = listaAdyacencia[actual].obtenerValores();
+            for (int i = cantidad - 1; i >= 0; i--) {
+                if (!visitado[vecinos[i]]) {
+                    pila.push(vecinos[i]);
+                }
+            }
+            delete[] vecinos;
+        }
+    }
+    cout << endl;
+    
+    delete[] visitado;
+}
+
+// DFS recursivo
+void GraphList::DFSRecursivo(int v, bool* visitado) {
+    visitado[v] = true;
+    cout << v << " ";
+    
+    int cantidad;
+    int* vecinos = listaAdyacencia[v].obtenerValores();
+    for (int i = 0; i < cantidad; i++) {
+        if (!visitado[vecinos[i]]) {
+            DFSRecursivo(vecinos[i], visitado);
+        }
+    }
+    delete[] vecinos;
 }
