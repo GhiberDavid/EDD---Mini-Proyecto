@@ -17,11 +17,13 @@ struct NodoLista {
 class SimpleList {
 private:
     NodoLista* cabeza;
-    int tamaño;
+    int tamanio;
     
 public:
-    SimpleList() : cabeza(nullptr), tamaño(0) {}
-
+    // Constructor
+    SimpleList() : cabeza(nullptr), tamanio(0) {}
+    
+    // Destructor
     ~SimpleList() {
         NodoLista* actual = cabeza;
         while (actual != nullptr) {
@@ -31,7 +33,7 @@ public:
         }
     }
     
-    // Agregando al final
+    // Agregar al final
     void agregar(int valor) {
         NodoLista* nuevo = new NodoLista(valor);
         
@@ -44,10 +46,10 @@ public:
             }
             actual->siguiente = nuevo;
         }
-        tamaño++;
+        tamanio++;
     }
     
-    // Eliminando un valor (primera ocurrencia)
+    // Eliminar un valor
     void eliminar(int valor) {
         if (cabeza == nullptr) return;
         
@@ -55,7 +57,7 @@ public:
             NodoLista* temp = cabeza;
             cabeza = cabeza->siguiente;
             delete temp;
-            tamaño--;
+            tamanio--;
             return;
         }
         
@@ -68,11 +70,11 @@ public:
             NodoLista* temp = actual->siguiente;
             actual->siguiente = actual->siguiente->siguiente;
             delete temp;
-            tamaño--;
+            tamanio--;
         }
     }
     
-    // Verificando si existe un valor
+    // Verificar si existe
     bool existe(int valor) {
         NodoLista* actual = cabeza;
         while (actual != nullptr) {
@@ -82,9 +84,9 @@ public:
         return false;
     }
     
-    // Obteniendo todos los valores (para copiar)
+    // Obtener todos los valores
     int* obtenerValores() {
-        int* valores = new int[tamaño];
+        int* valores = new int[tamanio];
         NodoLista* actual = cabeza;
         int i = 0;
         while (actual != nullptr) {
@@ -94,26 +96,28 @@ public:
         return valores;
     }
     
-    // Obteniendo el tamaño
-    int getTamaño() { return tamaño; }
+    // Obtener el tamaño
+    int getTamanio() { 
+        return tamanio; 
+    }
     
-    // Imprimiendo lista
+    // Obtener valor en posición específica
+    int getValor(int indice) {
+        if (indice < 0 || indice >= tamanio) return -1;
+        NodoLista* actual = cabeza;
+        for (int i = 0; i < indice; i++) {
+            actual = actual->siguiente;
+        }
+        return actual->dato;
+    }
+    
+    // Imprimir lista
     void imprimir() {
         NodoLista* actual = cabeza;
         while (actual != nullptr) {
             cout << actual->dato << " ";
             actual = actual->siguiente;
         }
-    }
-    
-    // Operando para acceder como arreglo (solo para lectura)
-    int operator[](int indice) {
-        if (indice < 0 || indice >= tamaño) return -1;
-        NodoLista* actual = cabeza;
-        for (int i = 0; i < indice; i++) {
-            actual = actual->siguiente;
-        }
-        return actual->dato;
     }
 };
 

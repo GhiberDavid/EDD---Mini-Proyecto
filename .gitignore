@@ -1,0 +1,32 @@
+# Archivos compilados (ejecutables)
+test_basico
+test_recorridos
+test_completo
+programa
+*.exe
+*.out
+a.out
+
+# Archivos objeto
+*.o
+*.obj
+
+# Archivos temporales
+*~
+*.swp
+.DS_Store
+*.tmp
+
+# Directorios de compilación
+build/
+bin/
+debug/
+release/
+
+# IDE y editores
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos de log
+*.log

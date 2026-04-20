@@ -19,6 +19,7 @@ public:
     GraphList(int vertices, bool esDirigido = false);
     ~GraphList();
     
+    // Operaciones básicas
     void agregarArista(int u, int v);
     void eliminarArista(int u, int v);
     void agregarVertice();
@@ -28,18 +29,16 @@ public:
     int getGrado(int v);
     void printGrafo();
     int getNumVertices() { return numVertices; }
-
+    
     // Recorridos
     void BFS(int inicio);
     void DFS(int inicio);
     void DFSRecursivo(int v, bool* visitado);
-
-     // Algoritmos avanzados
+    
+    // Algoritmos avanzados
     bool esConexo();
     bool tieneCiclo();
     void caminoMasCorto(int inicio, int destino);
 };
 
 #endif
-
-

@@ -1,9 +1,11 @@
 #include "../include/GraphList.hpp"
-#include <queue>      // Para la cola en BFS
-#include <stack>      // Para la pila en DFS
+#include <queue>
+#include <stack>
+#include <climits>
 
-using namespace std; 
+using namespace std;
 
+// Constructor
 GraphList::GraphList(int vertices, bool esDirigido) {
     numVertices = vertices;
     capacidad = vertices + 5;
@@ -11,16 +13,18 @@ GraphList::GraphList(int vertices, bool esDirigido) {
     listaAdyacencia = new SimpleList[capacidad];
 }
 
+// Destructor
 GraphList::~GraphList() {
     delete[] listaAdyacencia;
 }
 
+// Redimensionar el arreglo
 void GraphList::redimensionar(int nuevaCapacidad) {
     SimpleList* nuevaLista = new SimpleList[nuevaCapacidad];
     
     for (int i = 0; i < numVertices; i++) {
         int* vecinos = listaAdyacencia[i].obtenerValores();
-        for (int j = 0; j < listaAdyacencia[i].getTamaño(); j++) {
+        for (int j = 0; j < listaAdyacencia[i].getTamanio(); j++) {
             nuevaLista[i].agregar(vecinos[j]);
         }
         delete[] vecinos;
@@ -31,6 +35,7 @@ void GraphList::redimensionar(int nuevaCapacidad) {
     capacidad = nuevaCapacidad;
 }
 
+// Agregar arista
 void GraphList::agregarArista(int u, int v) {
     if (u >= 0 && u < numVertices && v >= 0 && v < numVertices) {
         listaAdyacencia[u].agregar(v);
@@ -43,6 +48,7 @@ void GraphList::agregarArista(int u, int v) {
     }
 }
 
+// Eliminar arista
 void GraphList::eliminarArista(int u, int v) {
     if (u >= 0 && u < numVertices && v >= 0 && v < numVertices) {
         listaAdyacencia[u].eliminar(v);
@@ -53,6 +59,7 @@ void GraphList::eliminarArista(int u, int v) {
     }
 }
 
+// Verificar si existe arista
 bool GraphList::existeArista(int u, int v) {
     if (u >= 0 && u < numVertices && v >= 0 && v < numVertices) {
         return listaAdyacencia[u].existe(v);
@@ -60,15 +67,17 @@ bool GraphList::existeArista(int u, int v) {
     return false;
 }
 
+// Obtener vecinos de un vértice
 int* GraphList::getVecinos(int v, int& cantidad) {
     if (v >= 0 && v < numVertices) {
-        cantidad = listaAdyacencia[v].getTamaño();
+        cantidad = listaAdyacencia[v].getTamanio();
         return listaAdyacencia[v].obtenerValores();
     }
     cantidad = 0;
     return nullptr;
 }
 
+// Agregar un nuevo vértice
 void GraphList::agregarVertice() {
     if (numVertices >= capacidad) {
         redimensionar(capacidad + 5);
@@ -77,6 +86,7 @@ void GraphList::agregarVertice() {
     cout << "Vértice " << (numVertices - 1) << " agregado" << endl;
 }
 
+// Eliminar un vértice
 void GraphList::eliminarVertice(int v) {
     if (v >= 0 && v < numVertices) {
         for (int i = 0; i < numVertices; i++) {
@@ -86,7 +96,7 @@ void GraphList::eliminarVertice(int v) {
         for (int i = v; i < numVertices - 1; i++) {
             SimpleList nuevaLista;
             int* vecinos = listaAdyacencia[i + 1].obtenerValores();
-            for (int j = 0; j < listaAdyacencia[i + 1].getTamaño(); j++) {
+            for (int j = 0; j < listaAdyacencia[i + 1].getTamanio(); j++) {
                 nuevaLista.agregar(vecinos[j] > v ? vecinos[j] - 1 : vecinos[j]);
             }
             delete[] vecinos;
@@ -98,13 +108,15 @@ void GraphList::eliminarVertice(int v) {
     }
 }
 
+// Obtener grado de un vértice
 int GraphList::getGrado(int v) {
     if (v >= 0 && v < numVertices) {
-        return listaAdyacencia[v].getTamaño();
+        return listaAdyacencia[v].getTamanio();
     }
     return 0;
 }
 
+// Mostrar el grafo
 void GraphList::printGrafo() {
     cout << "\n=== Grafo (Lista de Adyacencia) ===" << endl;
     for (int i = 0; i < numVertices; i++) {
@@ -138,15 +150,14 @@ void GraphList::BFS(int inicio) {
         cola.pop();
         cout << actual << " ";
         
-        int cantidad;
-        int* vecinos = listaAdyacencia[actual].obtenerValores();
-        for (int i = 0; i < cantidad; i++) {
-            if (!visitado[vecinos[i]]) {
-                visitado[vecinos[i]] = true;
-                cola.push(vecinos[i]);
+        int grado = listaAdyacencia[actual].getTamanio();
+        for (int i = 0; i < grado; i++) {
+            int vecino = listaAdyacencia[actual].getValor(i);
+            if (!visitado[vecino]) {
+                visitado[vecino] = true;
+                cola.push(vecino);
             }
         }
-        delete[] vecinos;
     }
     cout << endl;
     
@@ -178,14 +189,13 @@ void GraphList::DFS(int inicio) {
             visitado[actual] = true;
             cout << actual << " ";
             
-            int cantidad;
-            int* vecinos = listaAdyacencia[actual].obtenerValores();
-            for (int i = cantidad - 1; i >= 0; i--) {
-                if (!visitado[vecinos[i]]) {
-                    pila.push(vecinos[i]);
+            int grado = listaAdyacencia[actual].getTamanio();
+            for (int i = grado - 1; i >= 0; i--) {
+                int vecino = listaAdyacencia[actual].getValor(i);
+                if (!visitado[vecino]) {
+                    pila.push(vecino);
                 }
             }
-            delete[] vecinos;
         }
     }
     cout << endl;
@@ -198,14 +208,13 @@ void GraphList::DFSRecursivo(int v, bool* visitado) {
     visitado[v] = true;
     cout << v << " ";
     
-    int cantidad;
-    int* vecinos = listaAdyacencia[v].obtenerValores();
-    for (int i = 0; i < cantidad; i++) {
-        if (!visitado[vecinos[i]]) {
-            DFSRecursivo(vecinos[i], visitado);
+    int grado = listaAdyacencia[v].getTamanio();
+    for (int i = 0; i < grado; i++) {
+        int vecino = listaAdyacencia[v].getValor(i);
+        if (!visitado[vecino]) {
+            DFSRecursivo(vecino, visitado);
         }
     }
-    delete[] vecinos;
 }
 
 // Verificar si el grafo es conexo
@@ -225,15 +234,14 @@ bool GraphList::esConexo() {
         int actual = pila.top();
         pila.pop();
         
-        int cantidad;
-        int* vecinos = listaAdyacencia[actual].obtenerValores();
-        for (int i = 0; i < cantidad; i++) {
-            if (!visitado[vecinos[i]]) {
-                visitado[vecinos[i]] = true;
-                pila.push(vecinos[i]);
+        int grado = listaAdyacencia[actual].getTamanio();
+        for (int i = 0; i < grado; i++) {
+            int vecino = listaAdyacencia[actual].getValor(i);
+            if (!visitado[vecino]) {
+                visitado[vecino] = true;
+                pila.push(vecino);
             }
         }
-        delete[] vecinos;
     }
     
     bool conexo = true;
@@ -248,55 +256,42 @@ bool GraphList::esConexo() {
     return conexo;
 }
 
+// Función auxiliar para detectar ciclo usando DFS recursivo
+bool cicloDFS(int v, bool* visitado, int padre, SimpleList* listaAdyacencia) {
+    visitado[v] = true;
+    
+    int grado = listaAdyacencia[v].getTamanio();
+    for (int i = 0; i < grado; i++) {
+        int vecino = listaAdyacencia[v].getValor(i);
+        
+        if (!visitado[vecino]) {
+            if (cicloDFS(vecino, visitado, v, listaAdyacencia)) {
+                return true;
+            }
+        } else if (vecino != padre) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Verificar si el grafo tiene ciclo
 bool GraphList::tieneCiclo() {
     bool* visitado = new bool[numVertices];
-    bool* enPila = new bool[numVertices];
     for (int i = 0; i < numVertices; i++) {
         visitado[i] = false;
-        enPila[i] = false;
     }
     
     for (int i = 0; i < numVertices; i++) {
         if (!visitado[i]) {
-            stack<pair<int, int>> pila;
-            pila.push({i, 0});
-            
-            while (!pila.empty()) {
-                int actual = pila.top().first;
-                int& indice = pila.top().second;
-                
-                if (!visitado[actual]) {
-                    visitado[actual] = true;
-                    enPila[actual] = true;
-                }
-                
-                int cantidad;
-                int* vecinos = listaAdyacencia[actual].obtenerValores();
-                
-                if (indice < cantidad) {
-                    int vecino = vecinos[indice];
-                    indice++;
-                    
-                    if (!visitado[vecino]) {
-                        pila.push({vecino, 0});
-                    } else if (enPila[vecino]) {
-                        delete[] vecinos;
-                        delete[] visitado;
-                        delete[] enPila;
-                        return true;
-                    }
-                } else {
-                    enPila[actual] = false;
-                    pila.pop();
-                    delete[] vecinos;
-                }
+            if (cicloDFS(i, visitado, -1, listaAdyacencia)) {
+                delete[] visitado;
+                return true;
             }
         }
     }
     
     delete[] visitado;
-    delete[] enPila;
     return false;
 }
 
@@ -326,17 +321,16 @@ void GraphList::caminoMasCorto(int inicio, int destino) {
         int actual = cola.front();
         cola.pop();
         
-        int cantidad;
-        int* vecinos = listaAdyacencia[actual].obtenerValores();
-        for (int i = 0; i < cantidad; i++) {
-            if (!visitado[vecinos[i]]) {
-                visitado[vecinos[i]] = true;
-                distancia[vecinos[i]] = distancia[actual] + 1;
-                predecesor[vecinos[i]] = actual;
-                cola.push(vecinos[i]);
+        int grado = listaAdyacencia[actual].getTamanio();
+        for (int i = 0; i < grado; i++) {
+            int vecino = listaAdyacencia[actual].getValor(i);
+            if (!visitado[vecino]) {
+                visitado[vecino] = true;
+                distancia[vecino] = distancia[actual] + 1;
+                predecesor[vecino] = actual;
+                cola.push(vecino);
             }
         }
-        delete[] vecinos;
     }
     
     if (distancia[destino] == -1) {
