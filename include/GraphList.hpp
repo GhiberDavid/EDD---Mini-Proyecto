@@ -28,11 +28,16 @@ public:
     int getGrado(int v);
     void printGrafo();
     int getNumVertices() { return numVertices; }
-    
+
     // Recorridos
     void BFS(int inicio);
     void DFS(int inicio);
     void DFSRecursivo(int v, bool* visitado);
+
+     // Algoritmos avanzados
+    bool esConexo();
+    bool tieneCiclo();
+    void caminoMasCorto(int inicio, int destino);
 };
 
 #endif
